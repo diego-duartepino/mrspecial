@@ -126,6 +126,23 @@ def updateBITables():
 
 
 
+def remove_csv_file(file_path):
+    """
+    Removes a .csv file at the given file_path.
+
+    Args:
+        file_path (str): Full path to the .csv file.
+    """
+    if file_path.endswith('.csv'):
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            print(f"File removed: {file_path}")
+        else:
+            print(f"File not found: {file_path}")
+    else:
+        print("The specified file is not a .csv file.")
+
+
 def main(tables):
     etl = ETL()
 
@@ -145,6 +162,9 @@ def main(tables):
     etl.close()
     etl.load(transformed_data, target=target_server)
     updateBITables()
+    remove_csv_file('exported_tables/db_mrspecialdw_DailyTotals_Products_By_SKU.csv')
+    
+
     # # Step 4: Close both connections
 
 if __name__ == '__main__':
