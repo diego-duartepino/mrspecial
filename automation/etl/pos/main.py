@@ -89,10 +89,11 @@ def updateBITables():
     "LocationId"::bigint, "SKU"::bigint,
     "QtySold"::numeric, "TotalSold"::numeric, "WeightSold"::numeric, "PRO5_ProductId"::numeric
     FROM "DailyTotals_Products_By_SKU"
-    WHERE TO_DATE("TransactionDate", 'YYYY-MM-DD') >= DATE '2025-04-01'
+    WHERE TO_DATE("TransactionDate", 'YYYY-MM-DD') >= DATE '2025-06-26'
     AND "SKU"::bigint < 100
     AND "PRO5_ProductId"::numeric = 0.0;
     """)
+    print("Query #1 Done")
     cursor.execute("""
     INSERT INTO "StoreSalesByUPC_2024_to_Q1_2025" (
     "Sales_Date", "Store", "SBO_ProductId", "PRO5_ProductId",
@@ -106,8 +107,9 @@ def updateBITables():
     "Department", "SubDepartment", "POSDepartment",
     "QtySold"::numeric, "TotalSold"::numeric, "WeightSold"::numeric
     FROM "DailyTotals_Products_By_SKU"
-    WHERE TO_DATE("TransactionDate", 'YYYY-MM-DD') >= DATE '2025-04-01' AND "SKU"::bigint>=100 AND "PRO5_ProductId"::numeric != 0.0;
+    WHERE TO_DATE("TransactionDate", 'YYYY-MM-DD') >= DATE '2025-06-26' AND "SKU"::bigint>=100 AND "PRO5_ProductId"::numeric != 0.0;
     """)
+    print("Query #2 Done")
     cursor.execute("""
     INSERT INTO "StoreSalesUnkUPC_2024_to_Q1_2025" (
     "Sales_Date", "Store", "PRO5_ProductId",
@@ -117,9 +119,11 @@ def updateBITables():
     "TransactionDate", "LocationId"::bigint, "PRO5_ProductId"::numeric,
     "QtySold"::numeric, "TotalSold"::numeric, "WeightSold"::numeric
     FROM "DailyTotals_Products_By_SKU"
-    WHERE TO_DATE("TransactionDate", 'YYYY-MM-DD') >= DATE '2025-04-01' AND "SKU"::bigint>=100 AND "PRO5_ProductId"::numeric = 0.0;`
+    WHERE TO_DATE("TransactionDate", 'YYYY-MM-DD') >= DATE '2025-06-26' AND "SKU"::bigint>=100 AND "PRO5_ProductId"::numeric = 0.0;
     """)
+    print("Query #3 Done")
 
+    conn.commit()
     cursor.close()
     conn.close()
     return "Successfully Updated BI Tables!"

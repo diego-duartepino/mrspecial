@@ -44,12 +44,17 @@ class ETL:
                 first_chunk = True
                 chunk_num = 0
 
-                for chunk in pd.read_sql(f'SELECT * FROM \"{table}\"', engine, chunksize=chunksize):
+                query = f"SELECT * FROM \"{table}\" WHERE \"TransactionDate\" >= '2025-06-26'"
+                # query = f"SELECT * FROM \"{table}\""
+
+                for chunk in pd.read_sql(query, engine, chunksize=chunksize):
                     chunk_num += 1
                     chunk.to_csv(csv_path, mode='a', index=False, header=first_chunk)
                     total_rows += len(chunk)
                     first_chunk = False
                     print(f"  ↪ Chunk {chunk_num}: saved {len(chunk)} rows")
+
+
 
                 print(f"✓ Finished {table}: {total_rows} rows written to {csv_path}")
                 dataframes[table] = pd.read_csv(csv_path)
