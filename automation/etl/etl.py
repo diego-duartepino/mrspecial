@@ -6,6 +6,8 @@ from tools.load import load_to_postgres  # You can add load_to_sqlserver if need
 from tqdm import tqdm
 import time
 
+from datetime import date, timedelta
+
 
 class ETL:
     def __init__(self):
@@ -28,6 +30,8 @@ class ETL:
             db_name = self.__pg_creds['database']
         else:
             raise ValueError("source_db must be either 'sqlserver' or 'postgres'")
+        
+        yesterday = date.today() - timedelta(days=1)
 
         print(f"\n📦 Starting extraction from {source}...\n")
 
@@ -43,8 +47,9 @@ class ETL:
                 total_rows = 0
                 first_chunk = True
                 chunk_num = 0
+                
 
-                query = f"SELECT * FROM \"{table}\" WHERE \"TransactionDate\" >= '2025-06-26'"
+                query = f"SELECT * FROM \"{table}\" WHERE \"TransactionDate\" >= '{yesterday}'"
                 # query = f"SELECT * FROM \"{table}\""
 
                 for chunk in pd.read_sql(query, engine, chunksize=chunksize):

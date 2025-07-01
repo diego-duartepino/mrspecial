@@ -3,6 +3,8 @@ import os
 
 import psycopg2
 
+from datetime import date, timedelta
+
 # Add parent directory to import path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -79,7 +81,9 @@ def updateBITables():
     )
     cursor = conn.cursor()
 
-    cursor.execute("""
+    yesterday = date.today() - timedelta(days=1)
+
+    cursor.execute(f"""
     INSERT INTO "StoreSaleByDept_2024_to_Q1_2025" (
     "Sales_Date", "Store", "SKU",
     "Qty_Sold", "Total_Sold", "Weight_Sold", "PRO5_ProductId"
@@ -89,12 +93,12 @@ def updateBITables():
     "LocationId"::bigint, "SKU"::bigint,
     "QtySold"::numeric, "TotalSold"::numeric, "WeightSold"::numeric, "PRO5_ProductId"::numeric
     FROM "DailyTotals_Products_By_SKU"
-    WHERE TO_DATE("TransactionDate", 'YYYY-MM-DD') >= DATE '2025-06-26'
+    WHERE TO_DATE("TransactionDate", 'YYYY-MM-DD') >= DATE '{yesterday}'
     AND "SKU"::bigint < 100
     AND "PRO5_ProductId"::numeric = 0.0;
     """)
     print("Query #1 Done")
-    cursor.execute("""
+    cursor.execute(f"""
     INSERT INTO "StoreSalesByUPC_2024_to_Q1_2025" (
     "Sales_Date", "Store", "SBO_ProductId", "PRO5_ProductId",
     "Prod_Brand", "Prod_Descr", "Prod_PackSize", "ItemGroup",
@@ -107,10 +111,10 @@ def updateBITables():
     "Department", "SubDepartment", "POSDepartment",
     "QtySold"::numeric, "TotalSold"::numeric, "WeightSold"::numeric
     FROM "DailyTotals_Products_By_SKU"
-    WHERE TO_DATE("TransactionDate", 'YYYY-MM-DD') >= DATE '2025-06-26' AND "SKU"::bigint>=100 AND "PRO5_ProductId"::numeric != 0.0;
+    WHERE TO_DATE("TransactionDate", 'YYYY-MM-DD') >= DATE '{yesterday}' AND "SKU"::bigint>=100 AND "PRO5_ProductId"::numeric != 0.0;
     """)
     print("Query #2 Done")
-    cursor.execute("""
+    cursor.execute(f"""
     INSERT INTO "StoreSalesUnkUPC_2024_to_Q1_2025" (
     "Sales_Date", "Store", "PRO5_ProductId",
     "Qty_Sold", "Total_Sold", "Weight_Sold"
@@ -119,7 +123,7 @@ def updateBITables():
     "TransactionDate", "LocationId"::bigint, "PRO5_ProductId"::numeric,
     "QtySold"::numeric, "TotalSold"::numeric, "WeightSold"::numeric
     FROM "DailyTotals_Products_By_SKU"
-    WHERE TO_DATE("TransactionDate", 'YYYY-MM-DD') >= DATE '2025-06-26' AND "SKU"::bigint>=100 AND "PRO5_ProductId"::numeric = 0.0;
+    WHERE TO_DATE("TransactionDate", 'YYYY-MM-DD') >= DATE '{yesterday}' AND "SKU"::bigint>=100 AND "PRO5_ProductId"::numeric = 0.0;
     """)
     print("Query #3 Done")
 
