@@ -174,7 +174,7 @@ def updateMetabaseTables():
     "Qty_Sold",
     "Total_Sold",
     "Weight_Sold",
-        "Source"
+    "Source"
     )
     SELECT
     "Sales_Date",
