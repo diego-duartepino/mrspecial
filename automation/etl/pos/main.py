@@ -100,13 +100,13 @@ def updateBITables():
     print("Query #1 Done")
     cursor.execute(f"""
     INSERT INTO "StoreSalesByUPC_2024_to_Q1_2025" (
-    "Sales_Date", "Store", "SBO_ProductId", "PRO5_ProductId",
+    "Sales_Date", "Store", "SBO_ProductId", "PRO5_ProductId", "SKU",
     "Prod_Brand", "Prod_Descr", "Prod_PackSize", "ItemGroup",
     "Department", "SubDepartment", "POSDepartment",
     "Qty_Sold", "Total_Sold", "Weight_Sold"
     )
     SELECT
-    "TransactionDate", "LocationId"::bigint, "SBO_ProductId"::numeric, "PRO5_ProductId"::numeric,
+    "TransactionDate", "LocationId"::bigint, "SBO_ProductId"::numeric, "PRO5_ProductId"::numeric, "SKU"::bigint,
     "Brand", "Description", "PackSize", "ItemGroup",
     "Department", "SubDepartment", "POSDepartment",
     "QtySold"::numeric, "TotalSold"::numeric, "WeightSold"::numeric
@@ -151,7 +151,21 @@ def updateMetabaseTables():
     cursor.execute(f"""
     INSERT INTO "StoreSales"
     SELECT
-        *,
+        "Sales_Date",
+        "Store",
+        "SBO_ProductId",
+        "PRO5_ProductId",
+        "SKU",
+        "Prod_Brand",
+        "Prod_Descr",
+        "Prod_PackSize",
+        "ItemGroup",
+        "Department",
+        "SubDepartment",
+        "POSDepartment",
+        "Qty_Sold",
+        "Total_Sold",
+        "Weight_Sold",
         'StoreSalesByUPC' AS "Source"
     FROM "StoreSalesByUPC_2024_to_Q1_2025"
     WHERE TO_DATE("Sales_Date", 'YYYY-MM-DD') >= DATE '{yesterday}';
@@ -194,7 +208,7 @@ def updateMetabaseTables():
     "Weight_Sold",
     'StoreSaleByDept' as "Source"
     FROM "StoreSaleByDept_2024_to_Q1_2025"
-    WHERE  TO_DATE("Sales_Date", 'YYYY-MM-DD') >= DATE '{yesterday}';
+    WHERE "Sales_Date"::date >= DATE '{yesterday}';
     """)
     print("Query #2 Done")
     cursor.execute(f"""
