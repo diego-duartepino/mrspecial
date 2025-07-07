@@ -140,7 +140,8 @@ def updateBITables():
     "Department", "SubDepartment", "POSDepartment",
     "QtySold"::numeric, "TotalSold"::numeric, "WeightSold"::numeric
     FROM "DailyTotals_Products_By_SKU"
-    WHERE TO_DATE("TransactionDate", 'YYYY-MM-DD') >= DATE '{yesterday}' AND "SKU"::bigint>=100 AND "PRO5_ProductId"::numeric != 0.0;
+    WHERE TO_DATE("TransactionDate", 'YYYY-MM-DD') >= DATE '{yesterday}'
+    AND "SKU"::bigint>=100 AND "PRO5_ProductId"::numeric != 0.0;
     """)
     print("Query #2 Done")
     # cursor.execute(f"""
@@ -163,7 +164,8 @@ def updateBITables():
     "TransactionDate", "LocationId"::bigint, "PRO5_ProductId"::numeric,
     "QtySold"::numeric, "TotalSold"::numeric, "WeightSold"::numeric
     FROM "DailyTotals_Products_By_SKU"
-    WHERE TO_DATE("TransactionDate", 'YYYY-MM-DD') >= DATE '{yesterday}' AND "SKU"::bigint>=100 AND "PRO5_ProductId"::numeric = 0.0;
+    WHERE TO_DATE("TransactionDate", 'YYYY-MM-DD') >= DATE '{yesterday}'
+    AND "SKU"::bigint>=100 AND "PRO5_ProductId"::numeric = 0.0;
     """)
     print("Query #3 Done")
 
@@ -208,7 +210,7 @@ def updateMetabaseTables():
         "Weight_Sold",
         'StoreSalesByUPC' AS "Source"
     FROM "StoreSalesByUPC_2024_to_Q1_2025"
-    WHERE TO_DATE("Sales_Date", 'YYYY-MM-DD') >= DATE '{yesterday}';
+    WHERE "Sales_Date"::date >= DATE '{yesterday}';
     """)
     print("Query #1 Done")
     cursor.execute(f"""
@@ -334,9 +336,9 @@ def main(tables):
 
     etl.close()
     etl.load(transformed_data, target=target_server)
-    # updateBITables()
-    # updateMetabaseTables()
-    # remove_csv_file('exported_tables/db_mrspecialdw_DailyTotals_Products_By_SKU.csv')
+    updateBITables()
+    updateMetabaseTables()
+    remove_csv_file('exported_tables/db_mrspecialdw_DailyTotals_Products_By_SKU.csv')
     
 
     # # Step 4: Close both connections

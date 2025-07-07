@@ -31,7 +31,7 @@ class ETL:
         else:
             raise ValueError("source_db must be either 'sqlserver' or 'postgres'")
         
-        # yesterday = date.today() - timedelta(days=1)
+        yesterday = date.today() - timedelta(days=1)
 
         print(f"\n📦 Starting extraction from {source}...\n")
 
@@ -50,7 +50,7 @@ class ETL:
 
 
                 
-                query = f"SELECT * FROM \"{table}\" WHERE \"TransactionDate\" >= '2025-07-03' AND \"TransactionDate\" <= '2025-07-05'"
+                query = f"SELECT * FROM \"{table}\" WHERE \"TransactionDate\" >= '{yesterday}'"
                 # query = f"SELECT * FROM \"{table}\" WHERE \"TransactionDate\" >= '{yesterday}'"
                 # query = f"SELECT * FROM \"{table}\""
 
