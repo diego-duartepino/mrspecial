@@ -7,7 +7,7 @@ SELECT
   "LocationId"::bigint, "SKU"::bigint,
   "QtySold"::numeric, "TotalSold"::numeric, "WeightSold"::numeric, "PRO5_ProductId"::numeric
 FROM "DailyTotals_Products_By_SKU"
-WHERE TO_DATE("TransactionDate", 'YYYY-MM-DD') >= DATE '2025-04-01'
+WHERE TO_DATE("TransactionDate", 'YYYY-MM-DD') >= DATE '2025-07-03'
   AND "SKU"::bigint < 100
   AND "PRO5_ProductId"::numeric = 0.0;
 --
@@ -23,7 +23,7 @@ SELECT
   "Department", "SubDepartment", "POSDepartment",
   "QtySold"::numeric, "TotalSold"::numeric, "WeightSold"::numeric
 FROM "DailyTotals_Products_By_SKU"
-WHERE TO_DATE("TransactionDate", 'YYYY-MM-DD') >= DATE '2025-04-01' AND "SKU"::bigint>=100 AND "PRO5_ProductId"::numeric != 0.0;
+WHERE TO_DATE("TransactionDate", 'YYYY-MM-DD') >= DATE '2025-07-03' AND "SKU"::bigint>=100 AND "PRO5_ProductId"::numeric != 0.0;
 
 INSERT INTO "StoreSalesUnkUPC_2024_to_Q1_2025" (
   "Sales_Date", "Store", "PRO5_ProductId",
@@ -33,5 +33,5 @@ SELECT
   "TransactionDate", "LocationId"::bigint, "PRO5_ProductId"::numeric,
   "QtySold"::numeric, "TotalSold"::numeric, "WeightSold"::numeric
 FROM "DailyTotals_Products_By_SKU"
-WHERE TO_DATE("TransactionDate", 'YYYY-MM-DD') >= DATE '2025-04-01' AND "SKU"::bigint>=100 AND "PRO5_ProductId"::numeric = 0.0;
+WHERE TO_DATE("TransactionDate", 'YYYY-MM-DD') >= DATE '2025-07-03' AND "SKU"::bigint>=100 AND "PRO5_ProductId"::numeric = 0.0;
 

@@ -83,6 +83,20 @@ def updateBITables():
 
     yesterday = date.today() - timedelta(days=1)
 
+    # cursor.execute(f"""
+    # INSERT INTO "StoreSaleByDept_2024_to_Q1_2025" (
+    # "Sales_Date", "Store", "SKU",
+    # "Qty_Sold", "Total_Sold", "Weight_Sold", "PRO5_ProductId"
+    # )
+    # SELECT
+    # TO_TIMESTAMP("TransactionDate", 'YYYY-MM-DD'),
+    # "LocationId"::bigint, "SKU"::bigint,
+    # "QtySold"::numeric, "TotalSold"::numeric, "WeightSold"::numeric, "PRO5_ProductId"::numeric
+    # FROM "DailyTotals_Products_By_SKU"
+    # WHERE TO_DATE("TransactionDate", 'YYYY-MM-DD') >= DATE '{yesterday}'
+    # AND "SKU"::bigint < 100
+    # AND "PRO5_ProductId"::numeric = 0.0;
+    # """)
     cursor.execute(f"""
     INSERT INTO "StoreSaleByDept_2024_to_Q1_2025" (
     "Sales_Date", "Store", "SKU",
@@ -98,6 +112,21 @@ def updateBITables():
     AND "PRO5_ProductId"::numeric = 0.0;
     """)
     print("Query #1 Done")
+    # cursor.execute(f"""
+    # INSERT INTO "StoreSalesByUPC_2024_to_Q1_2025" (
+    # "Sales_Date", "Store", "SBO_ProductId", "PRO5_ProductId", "SKU",
+    # "Prod_Brand", "Prod_Descr", "Prod_PackSize", "ItemGroup",
+    # "Department", "SubDepartment", "POSDepartment",
+    # "Qty_Sold", "Total_Sold", "Weight_Sold"
+    # )
+    # SELECT
+    # "TransactionDate", "LocationId"::bigint, "SBO_ProductId"::numeric, "PRO5_ProductId"::numeric, "SKU"::bigint,
+    # "Brand", "Description", "PackSize", "ItemGroup",
+    # "Department", "SubDepartment", "POSDepartment",
+    # "QtySold"::numeric, "TotalSold"::numeric, "WeightSold"::numeric
+    # FROM "DailyTotals_Products_By_SKU"
+    # WHERE TO_DATE("TransactionDate", 'YYYY-MM-DD') >= DATE '{yesterday}' AND "SKU"::bigint>=100 AND "PRO5_ProductId"::numeric != 0.0;
+    # """)
     cursor.execute(f"""
     INSERT INTO "StoreSalesByUPC_2024_to_Q1_2025" (
     "Sales_Date", "Store", "SBO_ProductId", "PRO5_ProductId", "SKU",
@@ -114,6 +143,17 @@ def updateBITables():
     WHERE TO_DATE("TransactionDate", 'YYYY-MM-DD') >= DATE '{yesterday}' AND "SKU"::bigint>=100 AND "PRO5_ProductId"::numeric != 0.0;
     """)
     print("Query #2 Done")
+    # cursor.execute(f"""
+    # INSERT INTO "StoreSalesUnkUPC_2024_to_Q1_2025" (
+    # "Sales_Date", "Store", "PRO5_ProductId",
+    # "Qty_Sold", "Total_Sold", "Weight_Sold"
+    # )
+    # SELECT
+    # "TransactionDate", "LocationId"::bigint, "PRO5_ProductId"::numeric,
+    # "QtySold"::numeric, "TotalSold"::numeric, "WeightSold"::numeric
+    # FROM "DailyTotals_Products_By_SKU"
+    # WHERE TO_DATE("TransactionDate", 'YYYY-MM-DD') >= DATE '{yesterday}' AND "SKU"::bigint>=100 AND "PRO5_ProductId"::numeric = 0.0;
+    # """)
     cursor.execute(f"""
     INSERT INTO "StoreSalesUnkUPC_2024_to_Q1_2025" (
     "Sales_Date", "Store", "PRO5_ProductId",
@@ -294,9 +334,9 @@ def main(tables):
 
     etl.close()
     etl.load(transformed_data, target=target_server)
-    updateBITables()
-    updateMetabaseTables()
-    remove_csv_file('exported_tables/db_mrspecialdw_DailyTotals_Products_By_SKU.csv')
+    # updateBITables()
+    # updateMetabaseTables()
+    # remove_csv_file('exported_tables/db_mrspecialdw_DailyTotals_Products_By_SKU.csv')
     
 
     # # Step 4: Close both connections
