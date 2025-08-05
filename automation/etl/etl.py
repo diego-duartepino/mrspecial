@@ -101,7 +101,16 @@ class ETL:
                 load_to_postgres(df, table_name=table)
             else:
                 raise NotImplementedError("Only PostgreSQL loading is implemented. Add more loaders if needed.")
-
+    def load_pmr(self, dataframes: dict, target: str = 'postgres'):
+        """
+        Load the given DataFrames into the target database.
+        """
+        for table, df in dataframes.items():
+            print(f"🚚 Loading table: {table} into {target}")
+            if target == 'postgres':
+                load_to_postgres(df, table_name=table, if_exists='')
+            else:
+                raise NotImplementedError("Only PostgreSQL loading is implemented. Add more loaders if needed.")
     def close(self):
         """
         Close both SQL Server and PostgreSQL connections.
