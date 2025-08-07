@@ -1,0 +1,16 @@
+et_xmlfile
+numpy
+openpyxl
+pandas
+psycopg2
+psycopg2-binary
+pyodbc
+python-dateutil
+python-dotenv
+pytz
+six
+SQLAlchemy
+tqdm
+typing_extensions
+tzdata
+requests
