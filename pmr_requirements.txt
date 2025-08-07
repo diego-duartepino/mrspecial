@@ -2,7 +2,6 @@ et_xmlfile
 numpy
 openpyxl
 pandas
-psycopg2
 psycopg2-binary
 pyodbc
 python-dateutil
