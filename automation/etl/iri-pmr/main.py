@@ -80,11 +80,11 @@ def main(tables_with_nulls):
     extracted_data.to_csv('upc.csv', index=False)
 
     # # Step 2: Transform the extracted data
-    # transformed_data = etl.transform_iri(extracted_data)
+    transformed_data = etl.transform_iri(extracted_data)
 
     # # # Step 3: Load the transformed data into the target DB
     etl.close()
-    # etl.load(transformed_data, target=target_server)
+    etl.load(transformed_data, target=target_server)
 
     # # Step 4: Close both connections
 
