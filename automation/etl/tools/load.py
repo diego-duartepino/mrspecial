@@ -104,15 +104,15 @@ def load_to_postgres(df, table_name, if_exists='replace'):
         return
 
     # # Step 3: Load data
-    # try:
-    #     with psycopg2.connect(dbname=database, user=user, password=password, host=host, port=port) as conn:
-    #         conn.set_session(autocommit=True)
-    #         with conn.cursor() as cur:
-    #             buffer = StringIO()
-    #             df.to_csv(buffer, index=False, header=False)
-    #             buffer.seek(0)
-    #             cur.copy_expert(f'COPY {quoted_table_name} FROM STDIN WITH CSV', buffer)
-    #             print(f"✅ Loaded {total_rows} rows into {quoted_table_name}")
-    # except Exception as e:
-    #     print(f"❌ COPY failed: {e}")
+    try:
+        with psycopg2.connect(dbname=database, user=user, password=password, host=host, port=port) as conn:
+            conn.set_session(autocommit=True)
+            with conn.cursor() as cur:
+                buffer = StringIO()
+                df.to_csv(buffer, index=False, header=False)
+                buffer.seek(0)
+                cur.copy_expert(f'COPY {quoted_table_name} FROM STDIN WITH CSV', buffer)
+                print(f"✅ Loaded {total_rows} rows into {quoted_table_name}")
+    except Exception as e:
+        print(f"❌ COPY failed: {e}")
 
