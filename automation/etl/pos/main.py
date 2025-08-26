@@ -67,7 +67,7 @@ def get_tables_with_nulls(tables):
 
     return tables_with_nulls
 
-def updateBITables():
+def updateBITables(fecha:str=''):
     import psycopg2
 
     user = os.getenv("PG_USER")
@@ -81,7 +81,10 @@ def updateBITables():
     )
     cursor = conn.cursor()
 
-    yesterday = date.today() - timedelta(days=1)
+    if fecha == '':
+            yesterday = date.today() - timedelta(days=1)
+    elif fecha != '':
+        yesterday = fecha
 
     # cursor.execute(f"""
     # INSERT INTO "StoreSaleByDept_2024_to_Q1_2025" (
@@ -174,7 +177,7 @@ def updateBITables():
     conn.close()
     return "Successfully Updated BI Tables!"
 
-def updateMetabaseTables():
+def updateMetabaseTables(fecha:str = ""):
     import psycopg2
 
     user = os.getenv("PG_USER")
@@ -188,7 +191,10 @@ def updateMetabaseTables():
     )
     cursor = conn.cursor()
 
-    yesterday = date.today() - timedelta(days=1)
+    if fecha == '':
+        yesterday = date.today() - timedelta(days=1)
+    elif fecha != '':
+        yesterday = fecha
 
     cursor.execute(f"""
     INSERT INTO "StoreSales"
@@ -318,7 +324,7 @@ def remove_csv_file(file_path):
         print("The specified file is not a .csv file.")
 
 
-def main(tables):
+def main(tables,date:str=''):
     etl = ETL()
 
 
@@ -327,7 +333,7 @@ def main(tables):
     target_server = 'postgres'    # or extend to 'sqlserver' if implemented
 
     # Step 1: Extract data from the source DB
-    extracted_data = etl.extract(tables=tables, source=source_server, output_dir='./exported_tables')
+    extracted_data = etl.extract(tables=tables,fecha=date ,source=source_server, output_dir='./exported_tables')
 
     # Step 2: Transform the extracted data
     transformed_data = etl.transform(extracted_data)
@@ -336,10 +342,10 @@ def main(tables):
 
     etl.close()
     etl.load(transformed_data, target=target_server)
-    updateBITables()
-    updateMetabaseTables()
+    updateBITables(date)
+    updateMetabaseTables(date)
     remove_csv_file('exported_tables/db_mrspecialdw_DailyTotals_Products_By_SKU.csv')
-    
+
 
     # # Step 4: Close both connections
 

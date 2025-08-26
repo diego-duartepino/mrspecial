@@ -33,16 +33,19 @@ export default function IriCategoryBrandUpload() {
   useEffect(() => { checkApi(); }, []);
 
   // --- helpers ---
-  function normalizeMonth(v) {
-    const s = String(v || "").trim();
-    if (!s) return "";
-    const n = Number(s);
-    if (Number.isInteger(n) && n >= 1 && n <= 12) {
-      const M = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
-      return M[n - 1];
-    }
-    return s.slice(0, 3).toUpperCase();
+function normalizeMonth(v) {
+  const s = String(v || "").trim();
+  if (!s) return "";
+  const n = Number(s);
+  if (Number.isInteger(n) && n >= 1 && n <= 12) {
+    const M = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+    return M[n - 1];
   }
+  return s;
+}
 
   const issues = useMemo(() => {
     const list = [];
@@ -55,7 +58,7 @@ export default function IriCategoryBrandUpload() {
   const checklist = [
     { ok: !!source, label: "Source" },
     { ok: /^\d{4}$/.test(year), label: "Year (YYYY)" },
-    { ok: !!month, label: "Month (e.g., JAN or 1–12)" },
+    { ok: !!month, label: "Month (e.g., January)" },
   ];
 
   async function safeFetchJSON(input, init) {
@@ -155,15 +158,26 @@ export default function IriCategoryBrandUpload() {
           </p>
 
           <div className="row">
-            <div style={{ width: "100%", display: "grid", gap: 8, justifyItems: "center" }}>
+          <div style={{ width: "100%", display: "grid", gap: 8, justifyItems: "center" }}>
               <div className="label">Context</div>
-              <Field label="Source" value={source} onChange={setSource} placeholder="Source" />
+
+              <Field
+                label="Source"
+                
+                value={source}
+                onChange={setSource}
+                placeholder="Select source…"
+                options={["Big Chain", "Total Market", "Mr Special"]}
+              />
+
               <Field label="Year" type="number" value={year} onChange={setYear} placeholder="Year (e.g., 2025)" />
-              <Field label="Month" value={month} onChange={setMonth} placeholder="Month (e.g., JAN or 1–12)" />
+              <Field label="Month" value={month} onChange={setMonth} placeholder="Month (e.g., January)" />
+
             </div>
 
+
             {/* center the FileUpload block */}
-            <div style={{ width: "100%" }}>
+            <div style={{ width: "100%",display:'grid',justifyItems: "center" }}>
               <div className="label">Upload file</div>
               <div style={{ display: "flex", justifyContent: "center" }}>
                 <FileUpload
@@ -225,7 +239,7 @@ export default function IriCategoryBrandUpload() {
           <ul style={{ margin: 0, paddingLeft: 18, color: "#475569", fontSize: 13 }}>
             <li>Accepted file: <code>.xlsx</code>. Keep headers simple (no merged cells).</li>
             <li>Columns usually include <code>Category</code>, <code>Brand</code>, and a unique product key.</li>
-            <li>Month can be <code>JAN</code>–<code>DEC</code> or <code>1</code>–<code>12</code>.</li>
+            <li>Month can be <code>January</code>–<code>December</code>.</li>
             <li><em>Trigger processing</em> calls the JSON endpoint without uploading a file.</li>
           </ul>
 

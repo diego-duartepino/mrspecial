@@ -14,7 +14,7 @@ class ETL:
         self.__sql_conn, self.__sql_creds = get_sqlserver_connection()
         self.__pg_conn, self.__pg_creds = get_postgres_connection()
 
-    def extract(self, tables: list, source: str = 'sqlserver', output_dir: str = './exported_tables', chunksize: int = 100_000) -> dict:
+    def extract(self, tables: list, fecha:str = '' ,source: str = 'sqlserver', output_dir: str = './exported_tables', chunksize: int = 100_000) -> dict:
         """
         Efficiently extract large tables in chunks using SQLAlchemy.
         Overwrites existing CSVs if they already exist.
@@ -31,7 +31,10 @@ class ETL:
         else:
             raise ValueError("source_db must be either 'sqlserver' or 'postgres'")
         
-        yesterday = date.today() - timedelta(days=1)
+        if fecha == '':
+            yesterday = date.today() - timedelta(days=1)
+        elif fecha != '':
+            yesterday = fecha
 
         print(f"\n📦 Starting extraction from {source}...\n")
 

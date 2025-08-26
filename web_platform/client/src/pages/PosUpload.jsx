@@ -40,19 +40,37 @@ export default function PosUpload() {
     return list;
   }, [since]);
 
-  async function safeFetchJSON(input, init) {
-    const res = await fetch(input, init);
-    const ct = res.headers.get("content-type") || "";
-    if (!res.ok) {
-      const txt = await res.text().catch(() => "");
-      throw new Error(`HTTP ${res.status} ${res.statusText}: ${txt.slice(0, 200)}`);
-    }
-    if (!ct.includes("application/json")) {
-      const txt = await res.text();
-      throw new Error(`Expected JSON but got '${ct}'. First 200 chars:\n${txt.slice(0, 200)}`);
-    }
-    return res.json();
+ // Choose backend base URL once
+const API_BASE =
+  import.meta?.env?.VITE_API_URL ||      // Vite
+  process.env.REACT_APP_API_URL ||       // CRA
+  process.env.NEXT_PUBLIC_API_URL ||     // Next
+  "http://127.0.0.1:5001";               // fallback
+
+async function safeFetchJSON(input, init) {
+  // if input is relative, prefix with API_BASE
+  const url = input.startsWith("http") ? input : `${API_BASE}${input}`;
+
+  console.log("Fetching:", url);
+
+  const res = await fetch(url, init);
+  const ct = res.headers.get("content-type") || "";
+
+  if (!res.ok) {
+    const txt = await res.text().catch(() => "");
+    throw new Error(`HTTP ${res.status} ${res.statusText}: ${txt.slice(0, 200)}`);
   }
+
+  if (!ct.includes("application/json")) {
+    const txt = await res.text();
+    throw new Error(
+      `Expected JSON but got '${ct}'. First 200 chars:\n${txt.slice(0, 200)}`
+    );
+  }
+
+  return res.json();
+}
+
 
   const onTrigger = async () => {
     setErr(""); setOut(null);
@@ -70,6 +88,7 @@ export default function PosUpload() {
       });
       setOut(json);
     } catch (e) {
+      console.log("Error",e)
       setErr(String(e));
     } finally {
       setBusy(false);
@@ -130,6 +149,9 @@ export default function PosUpload() {
             <div style={{ width: "100%", display: "grid", gap: 8, justifyItems: "center" }}>
               <div className="label">Parameters</div>
               {/* Using Field with a date input */}
+              <div className="">
+                <div className="label">From</div>
+
               <Field
                 label="Start date"
                 type="date"
@@ -137,6 +159,7 @@ export default function PosUpload() {
                 onChange={setSince}
                 placeholder="YYYY-MM-DD"
               />
+              </div>
             </div>
 
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "center" }}>
