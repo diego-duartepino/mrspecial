@@ -5,7 +5,7 @@ import sys, os
 
 # add project root (so 'automation' is importable)
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-from automation.etl.pos import main as pos_main  # noqa
+from automation.etl.pos.main import main as pos_main, check  # noqa
 
 app = Flask(__name__)
 
@@ -43,9 +43,21 @@ def upload_pos_trigger():
         # make preflight return 204 with CORS headers
         return ("", 204)
     data = request.get_json(silent=True) or {}
-    print("Received data:", data)
-    # pos_main(['DailyTotals_Products_By_SKU'])
-    return jsonify({"ok": True, "received": data})
+    
+    # print("Received data:", data)
+    fecha = data['since']
+
+    # print("Fecha:", fecha)
+
+    daily_check = check(fecha)
+    print("Check",daily_check)
+    if daily_check > 0:
+        return f"Script from this day ({fecha}) on already triggered"
+    elif daily_check < 0:
+        return f"Date is older than yesterday: {fecha}"
+    elif daily_check == 0:
+        # output = pos_main(['DailyTotals_Products_By_SKU'],fecha)
+        return jsonify({"ok": True, "message": data})
 
 # 👇 register BEFORE app.run and allow OPTIONS
 @app.route("/api/upload/pmr/trigger", methods=["POST", "OPTIONS"])

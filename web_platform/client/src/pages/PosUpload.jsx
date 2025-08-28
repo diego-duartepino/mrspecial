@@ -190,7 +190,7 @@ async function safeFetchJSON(input, init) {
         </div>
 
         {/* right: readiness & results */}
-        <div className="card card--stretch" style={{ display: "grid", gap: 10, alignContent: "start" }}>
+        <div className="card" style={{ display: "grid", gap: 10, alignContent: "start" }}>
           <h3 style={{ margin: "4px 0 4px", fontSize: 18, fontWeight: 800, color: "#0f172a" }}>
             Readiness
           </h3>

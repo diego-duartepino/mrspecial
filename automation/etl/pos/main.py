@@ -324,6 +324,58 @@ def remove_csv_file(file_path):
         print("The specified file is not a .csv file.")
 
 
+import os
+import psycopg2
+from datetime import date, timedelta
+
+def check(fecha=""):
+    if fecha != "":
+        # convert fecha string → date object
+
+        yesterday = date.today() - timedelta(days=1)
+
+        try:
+            fecha_obj = date.fromisoformat(fecha)
+        except ValueError:
+            print(f"❌ Invalid date format: {fecha}. Use YYYY-MM-DD.")
+            return -1
+
+        # only allow today or >= yesterday
+        if fecha_obj < yesterday:
+            print(f"⚠️ {fecha} is older than yesterday. Nothing to verify.")
+            return -1
+        
+        user = os.getenv("PG_USER")
+        password = os.getenv("PG_PASSWORD")
+        host = os.getenv("PG_HOST")
+        port = os.getenv("PG_PORT", 5432)
+        database = os.getenv("PG_DB")
+
+        conn = psycopg2.connect(
+            dbname=database, user=user, password=password, host=host, port=port
+        )
+        cursor = conn.cursor()
+
+        cursor.execute(
+            'SELECT COUNT(*) FROM "StoreSales" WHERE "Sales_Date" = %s',
+            (fecha,)
+        )
+        count = cursor.fetchone()[0]   # get the integer result
+
+        print(f"Sales on {fecha}: {count}")  # ✅ prints to console
+
+        cursor.close()
+        conn.close()
+
+        return count
+    else:
+        return "Nada que verificar"
+
+
+
+
+
+
 def main(tables,date:str=''):
     etl = ETL()
 
@@ -332,13 +384,15 @@ def main(tables,date:str=''):
     source_server = 'sqlserver'   # or 'postgres'
     target_server = 'postgres'    # or extend to 'sqlserver' if implemented
 
+    #Step 0: Check if todays data already was uploaded 
+  
     # Step 1: Extract data from the source DB
     extracted_data = etl.extract(tables=tables,fecha=date ,source=source_server, output_dir='./exported_tables')
 
-    # Step 2: Transform the extracted data
+    # # Step 2: Transform the extracted data
     transformed_data = etl.transform(extracted_data)
 
-    # # Step 3: Load the transformed data into the target DB
+    # # # Step 3: Load the transformed data into the target DB
 
     etl.close()
     etl.load(transformed_data, target=target_server)
@@ -348,6 +402,8 @@ def main(tables,date:str=''):
 
 
     # # Step 4: Close both connections
+
+    
 
 if __name__ == '__main__':
     # tables_with_nulls = get_tables_with_nulls(tables_to_extract)
